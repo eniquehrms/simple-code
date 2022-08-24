@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d9e163fd-736d-4da8-96ef-7cb910b743ba" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<api-gateway:autodiscovery apiId="18086158" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="bb0d23c5-5bfa-4b05-af69-cafc24ca0513" flowRef="simpleFlow" />
+	<flow name="simpleFlow" doc:id="ae145e4b-15bf-4882-aa1e-fc4476a19e1f" >
+		<http:listener doc:name="Listener" doc:id="0a9ccf7a-ce20-4647-88f3-aa93967c9df7" config-ref="HTTP_Listener_config" path="/simple"/>
+		<ee:transform doc:name="Transform Message" doc:id="cd460955-b8ec-4b29-843b-f11d1d227fe5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Hi " ++ attributes.queryParams.name as String ++ " you are using " ++ attributes.method as String ++ " method"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
